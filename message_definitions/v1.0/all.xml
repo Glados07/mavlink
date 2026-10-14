@@ -46,6 +46,11 @@
     commands: 60050 - 60099
   -->
   <include>AVSSUAS.xml</include>
+  <!-- fuel_cell.xml private range:
+    messages: 61000 - 61001
+    commands: none
+  -->
+  <include>fuel_cell.xml</include>
   <!-- Herelink.xml range of IDs:
     messages: 50000 - 50099
     commands: 50000 - 50099
