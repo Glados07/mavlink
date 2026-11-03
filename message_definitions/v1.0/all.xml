@@ -16,6 +16,7 @@
     Note: entities imported from other dialects may fall outside these ranges.
   -->
   <include>common.xml</include>
+  <include>fuel_cell.xml</include>
   <include>development.xml</include>
   <!-- icarous.xml range of IDs:
     messages: 42000 - 42999

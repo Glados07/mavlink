@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mavlink>
+  <include>common.xml</include>
+  <version>3</version>
+  <enums>
+    <enum name="FUEL_CELL_VALID_FLAGS" bitmask="true">
+      <description>Validity of the thirteen fuel-cell values. Bit0 is reserved after requested_power removal; existing bit assignments are preserved. Clear means unavailable, unconfirmed or stale.</description>
+      <entry value="2" name="FUEL_CELL_VALID_INLET_TEMPERATURE">
+        <description>inlet_temperature is valid.</description>
+      </entry>
+      <entry value="4" name="FUEL_CELL_VALID_OUTLET_TEMPERATURE">
+        <description>outlet_temperature is valid.</description>
+      </entry>
+      <entry value="8" name="FUEL_CELL_VALID_FAN_DUTY">
+        <description>fan_duty is valid.</description>
+      </entry>
+      <entry value="16" name="FUEL_CELL_VALID_INLET_VALVE_STATE">
+        <description>inlet_valve_state raw code is valid.</description>
+      </entry>
+      <entry value="32" name="FUEL_CELL_VALID_INLET_PRESSURE">
+        <description>inlet_pressure is valid.</description>
+      </entry>
+      <entry value="64" name="FUEL_CELL_VALID_PURGE_VALVE_STATE">
+        <description>purge_valve_state raw code is valid.</description>
+      </entry>
+      <entry value="128" name="FUEL_CELL_VALID_STACK_VOLTAGE">
+        <description>stack_voltage is valid.</description>
+      </entry>
+      <entry value="256" name="FUEL_CELL_VALID_STACK_CURRENT">
+        <description>stack_current in amperes is confirmed and valid. The source document's V unit must be resolved before setting this bit from TTL.</description>
+      </entry>
+      <entry value="512" name="FUEL_CELL_VALID_DCDC_VOLTAGE">
+        <description>dcdc_voltage is valid.</description>
+      </entry>
+      <entry value="1024" name="FUEL_CELL_VALID_DCDC_CURRENT">
+        <description>dcdc_current is valid.</description>
+      </entry>
+      <entry value="2048" name="FUEL_CELL_VALID_DCDC_STATE">
+        <description>dcdc_state raw code is valid.</description>
+      </entry>
+      <entry value="4096" name="FUEL_CELL_VALID_DCDC_FAULT">
+        <description>dcdc_fault raw code is valid.</description>
+      </entry>
+      <entry value="8192" name="FUEL_CELL_VALID_DCDC_TEMPERATURE_RAW">
+        <description>dcdc_temperature_raw byte is available. This does not establish a physical temperature unit.</description>
+      </entry>
+    </enum>
+  </enums>
+  <messages>
+    <message id="61000" name="FUEL_CELL_STATUS">
+      <description>DRAFT private AI-box-to-QGC telemetry containing exactly the thirteen selected FCS fields after requested-power removal. No actuator or start/stop command. Units refer to normalized outgoing telemetry, not unconfirmed TTL byte layouts. Unknown floats must be NaN and their validity bits clear. Integer codes require validity bits. Nominal initial maximum rate 10 Hz, configurable and only on fresh source data. Private ID, not an official allocation.</description>
+      <field type="uint32_t" name="time_boot_ms" units="ms">Measurement timestamp in AI-box monotonic time since its OS boot, modulo 2^32. Not Unix time. Do not refresh this timestamp when repeating stale data.</field>
+      <field type="uint32_t" name="valid_flags" enum="FUEL_CELL_VALID_FLAGS">Bitmask of valid business values. Unconfirmed source units, ambiguous source offsets and stale readings must have their bits clear.</field>
+      <field type="uint8_t" name="id" instance="true">Fuel-cell instance ID, initially 0. Source system/component IDs identify the aircraft and AI box separately.</field>
+      <field type="float" name="inlet_temperature" units="degC" invalid="NaN">Stack air-inlet temperature, described as ambient temperature in the FCS document.</field>
+      <field type="float" name="outlet_temperature" units="degC" invalid="NaN">Stack air-outlet temperature.</field>
+      <field type="float" name="fan_duty" units="%" invalid="NaN">Fan duty cycle, 0 to 100 percent, not a fraction from 0 to 1.</field>
+      <field type="uint8_t" name="inlet_valve_state">Inlet valve raw state code. The source document does not define code meanings. Ignore if its valid bit is clear.</field>
+      <field type="float" name="inlet_pressure" units="kPa" invalid="NaN">Stack gas-inlet pressure. Do not substitute gas-tank pressure from standard FUEL_STATUS.</field>
+      <field type="uint8_t" name="purge_valve_state">Purge valve raw state code. No open/closed enum is assumed.</field>
+      <field type="float" name="stack_voltage" units="V" invalid="NaN">Fuel-cell stack voltage.</field>
+      <field type="float" name="stack_current" units="A" invalid="NaN">Fuel-cell stack current normalized to amperes. Source table says V, a contradiction; do not convert or mark valid until vendor confirmation.</field>
+      <field type="float" name="dcdc_voltage" units="V" invalid="NaN">DC/DC output voltage.</field>
+      <field type="float" name="dcdc_current" units="A" invalid="NaN">DC/DC output current.</field>
+      <field type="uint8_t" name="dcdc_state">DC/DC raw state code; source enum is pending.</field>
+      <field type="uint8_t" name="dcdc_fault">DC/DC raw fault code; source enum is pending.</field>
+      <field type="uint8_t" name="dcdc_temperature_raw">Unmodified Byte22 value, not a Celsius value. Unit, sign and scaling are unconfirmed. Add a new physical-temperature extension later instead of reinterpreting this byte.</field>
+    </message>
+  </messages>
+</mavlink>
