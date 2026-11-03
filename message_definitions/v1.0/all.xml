@@ -70,6 +70,8 @@
     commands: 52500 - 52599
   -->
   <include>marsh.xml</include>
+  <!-- Rouke payload data relay: message 53022. -->
+  <include>rouke.xml</include>
   <!--Next range to allocate range of IDs:
     messages: 52600 - 52699 (< 60000)
     commands: 52600 - 52699 (< 60000)
