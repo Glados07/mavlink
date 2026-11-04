@@ -83,10 +83,8 @@
       <field type="uint8_t" name="control_command" enum="FUEL_CELL_CONTROL_COMMAND">Persistent fuel cell controller command.</field>
     </message>
     <message id="61001" name="FUEL_CELL_STATUS">
-      <description>Fuel cell controller connection, bus values, FCS state and command processing result. Published every 200 ms even when the CAN device is not connected, and immediately after connection changes or control request processing. Device state, SOC and DCDC output current are valid only while connection_state is OK. Receivers should mark this telemetry unavailable if no status is received for 1 second.</description>
+      <description>Fuel cell controller connection, FCS state and command processing result. Published every 200 ms even when the CAN device is not connected, and immediately after connection changes or control request processing. Device state, SOC and DCDC output current are valid only while connection_state is OK. Receivers should mark this telemetry unavailable if no status is received for 1 second.</description>
       <field type="uint32_t" name="response_request_id">Request ID associated with control_result. Zero means no request has been processed.</field>
-      <field type="uint16_t" name="bus_voltage">Flight-controller-owned bus voltage currently used in CAN control frames, in 0.1 V. Read-only telemetry, not a device acknowledgement.</field>
-      <field type="uint16_t" name="bus_current">Flight-controller-owned bus current currently used in CAN control frames, in 0.1 A. Read-only telemetry, not a device acknowledgement.</field>
       <field type="uint16_t" name="requested_power" units="W">Flight-controller-owned requested power currently used in CAN control frames. Read-only telemetry, not a device acknowledgement.</field>
       <field type="uint16_t" name="soc" units="d%">Last valid device lithium battery state of charge, in 0.1 percent. Valid only while connection_state is OK.</field>
       <field type="uint16_t" name="dcdc_output_current">Last valid device DCDC output current, in 0.1 A. All raw values from 0 to 65535 are valid. Read-only telemetry independent of the PMU bus current. Retained after disconnection and valid only while connection_state is OK.</field>
