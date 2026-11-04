@@ -10,7 +10,7 @@
 克隆仓库：
 
 ```bash
-MAVLINK_DIR="$/path/to/mavlink"
+export MAVLINK_DIR="/path/to/mavlink"
 git clone --recurse-submodules https://github.com/Glados07/mavlink.git "$MAVLINK_DIR"
 ```
 
@@ -35,7 +35,7 @@ git -C "$MAVLINK_DIR" submodule update --init --recursive
 克隆头文件仓库：
 
 ```bash
-CLIB_DIR="/path/to/c_library_v2"
+export CLIB_DIR="/path/to/c_library_v2"
 git clone https://github.com/Glados07/c_library_v2.git "$CLIB_DIR"
 ```
 
@@ -46,9 +46,10 @@ git clone https://github.com/Glados07/c_library_v2.git "$CLIB_DIR"
 git fetch SecDev/feature
 git checkout SecDev/feature
 ```
+
 ### 3. 开发约定：添加新功能
 
-从`SecDev/feature`分支创建新分支，命名为 `SecDev/ft/<new_feature>`。比如开发新功能'3D_map'，执行
+从`SecDev/feature`分支创建新分支开发，命名为 `SecDev/ft/<new_feature>`。比如开发新功能'3D_map'，执行
 
 ```sh
 git switch SecDev/feature
@@ -77,35 +78,42 @@ MAVLINK_PYTHON="$MAVLINK_DIR/build-venv/bin/python"
 "$MAVLINK_PYTHON" -m pip install -r "$MAVLINK_DIR/pymavlink/requirements.txt"
 ```
 
-
 ### 2. 生成 MAVLink 2 C 头文件
 
-找一个临时目标目录存取mavlink的生成文：
+找一个临时目标目录存取mavlink的生成文件：
 
 ```bash
-TMPDIR = "path/to/temporaryFolder"
+export TMPDIR="path/to/temporaryFolder"
 ```
 
-以 `all.xml` 作为唯一入口生成 QGC 使用的头文件。`mavgen` 会递归读取其中通过 `<include>` 引用的其他 XML，并生成对应 dialect 的头文件。生成完成后，保存本次协议 XML：
+mavgen 生成 dialect 的头文件。生成完成后，保存本次协议 XML：
 
 ```bash
 MAVLINK_OUT="$(mktemp -d "${TMPDIR:-/tmp}/mavlink-v2.XXXXXX")"
 
 (
-    set -e
+	set -e
     cd "$MAVLINK_DIR"
 
-    "$MAVLINK_PYTHON" pymavlink/tools/mavgen.py \
-        --lang=C --wire-protocol=2.0 \
-        --output="$MAVLINK_OUT" \
-        message_definitions/v1.0/all.xml
+    for dialect in \
+        all test storm32 ardupilotmega csAirLink uAvionix \
+        cubepilot ualberta icarous loweheiser paparazzi \
+        ASLUAV AVSSUAS matrixpilot python_array_test \
+        development fuel_cell marsh common standard minimal
+    do
+        "$MAVLINK_PYTHON" pymavlink/tools/mavgen.py \
+            --lang=C \
+            --wire-protocol=2.0 \
+            --output="$MAVLINK_OUT" \
+            "message_definitions/v1.0/$dialect.xml"
+    done
 
     mkdir -p "$MAVLINK_OUT/message_definitions"
     cp message_definitions/v1.0/*.xml "$MAVLINK_OUT/message_definitions/"
 )
 ```
 
-将生成结果同步到 `c_library_v2`：
+将临时目录下的生成结果同步到 `c_library_v2`仓库：
 
 ```bash
 rsync -avi --delete \
@@ -121,10 +129,10 @@ rsync -avi --delete \
 - 发布后，执行以下命令取新版本的hash版本号
 
 ```bash
-CLIB_REV="$(git -C "$CLIB_DIR" rev-parse HEAD)"
+git -C "$CLIB_DIR" rev-parse HEAD"
 ```
 
-`CLIB_REV` 就是 QGC 应引用的头文件版本hash值。
+此版本号就是 QGC 应引用的头文件版本hash值。
 
 ### 4. 更新 QGC 并构建
 
@@ -137,9 +145,25 @@ set(QGC_MAVLINK_GIT_REPO
 )
 
 set(QGC_MAVLINK_GIT_TAG
-    "<这里粘贴CLIB_REV的值>"
+    "<这里粘贴版本号hash值>"
     CACHE STRING "Tag of MAVLink Git Repo" FORCE
 )
 ```
 
-最后重新配置并构建实际使用的 QGC Kit。
+最后重新Run CMake，然后构建实际使用的 QGC Kit即可。
+
+---
+
+## c_library_v2 提交commit格式约定
+
+```md
+由mavlink库 <版本号> 版本自动生成
+- <提交描述>
+```
+
+**示例**：
+
+```md
+由mavlink库 33af200d25ec6f0925b49b1ba82bbf1294ea5f72 版本自动生成
+- 修改燃料电池状态协议
+```
