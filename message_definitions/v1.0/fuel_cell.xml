@@ -47,7 +47,7 @@
     </enum>
   </enums>
   <messages>
-    <message id="61000" name="FUEL_CELL_STATUS">
+    <message id="61002" name="FUEL_CELL_TELEMETRY">
       <description>DRAFT private AI-box-to-QGC telemetry containing exactly the thirteen selected FCS fields after requested-power removal. No actuator or start/stop command. Units refer to normalized outgoing telemetry, not unconfirmed TTL byte layouts. Unknown floats must be NaN and their validity bits clear. Integer codes require validity bits. Nominal initial maximum rate 10 Hz, configurable and only on fresh source data. Private ID, not an official allocation.</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Measurement timestamp in AI-box monotonic time since its OS boot, modulo 2^32. Not Unix time. Do not refresh this timestamp when repeating stale data.</field>
       <field type="uint32_t" name="valid_flags" enum="FUEL_CELL_VALID_FLAGS">Bitmask of valid business values. Unconfirmed source units, ambiguous source offsets and stale readings must have their bits clear.</field>
