@@ -74,7 +74,7 @@
       </entry>
     </enum>
     <enum name="FUEL_CELL_VALID_FLAGS" bitmask="true">
-      <description>Validity of the thirteen fuel-cell values. Bit0 is reserved after requested_power removal; existing bit assignments are preserved. Clear means unavailable, unconfirmed or stale.</description>
+      <description>Validity of the fifteen selected fuel-cell values. Bit0 is reserved after requested_power removal; existing bit assignments are preserved. Clear means unavailable, unconfirmed or stale.</description>
       <entry value="2" name="FUEL_CELL_VALID_INLET_TEMPERATURE">
         <description>inlet_temperature is valid.</description>
       </entry>
@@ -114,6 +114,12 @@
       <entry value="8192" name="FUEL_CELL_VALID_DCDC_TEMPERATURE_RAW">
         <description>dcdc_temperature_raw byte is available. This does not establish a physical temperature unit.</description>
       </entry>
+      <entry value="16384" name="FUEL_CELL_VALID_SYSTEM_STATUS">
+        <description>System status code is valid.</description>
+      </entry>
+      <entry value="32768" name="FUEL_CELL_VALID_SYSTEM_SUBSTATE">
+        <description>System substate code is valid.</description>
+      </entry>
     </enum>
   </enums>
   <messages>
@@ -137,7 +143,7 @@
       <field type="uint8_t" name="connection_state" enum="FUEL_CELL_CONNECTION_STATE">Current fuel cell controller connection state.</field>
     </message>
     <message id="61002" name="FUEL_CELL_TELEMETRY">
-      <description>DRAFT private AI-box-to-QGC telemetry containing exactly the thirteen selected FCS fields after requested-power removal. No actuator or start/stop command. Units refer to normalized outgoing telemetry, not unconfirmed TTL byte layouts. Unknown floats must be NaN and their validity bits clear. Integer codes require validity bits. Nominal initial maximum rate 10 Hz, configurable and only on fresh source data. Private ID, not an official allocation.</description>
+      <description>DRAFT private AI-box-to-QGC telemetry containing the fifteen yellow/green FCS V1.1 fields. No actuator or start/stop command. Units refer to normalized outgoing telemetry, not unconfirmed TTL byte layouts. Unknown floats must be NaN and their validity bits clear. Integer codes require validity bits. Nominal initial maximum rate 10 Hz, configurable and only on fresh source data. Private ID, not an official allocation.</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Measurement timestamp in AI-box monotonic time since its OS boot, modulo 2^32. Not Unix time. Do not refresh this timestamp when repeating stale data.</field>
       <field type="uint32_t" name="valid_flags" enum="FUEL_CELL_VALID_FLAGS">Bitmask of valid business values. Unconfirmed source units, ambiguous source offsets and stale readings must have their bits clear.</field>
       <field type="uint8_t" name="id" instance="true">Fuel-cell instance ID, initially 0. Source system/component IDs identify the aircraft and AI box separately.</field>
@@ -153,7 +159,10 @@
       <field type="float" name="dcdc_current" units="A" invalid="NaN">DC/DC output current.</field>
       <field type="uint8_t" name="dcdc_state">DC/DC raw state code; source enum is pending.</field>
       <field type="uint8_t" name="dcdc_fault">DC/DC raw fault code; source enum is pending.</field>
-      <field type="uint8_t" name="dcdc_temperature_raw">Unmodified Byte22 value, not a Celsius value. Unit, sign and scaling are unconfirmed. Add a new physical-temperature extension later instead of reinterpreting this byte.</field>
+      <field type="uint8_t" name="dcdc_temperature_raw">Unmodified FCS V1.1 Byte28. For display apply the documented offset of -40. The document does not specify a physical unit.</field>
+      <extensions/>
+      <field type="uint16_t" name="system_status">FCS V1.1 system status code from Byte31–32.</field>
+      <field type="uint16_t" name="system_substate">FCS V1.1 system substate code from Byte33–34.</field>
     </message>
   </messages>
 </mavlink>
