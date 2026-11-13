@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<mavlink>
+  <include>common.xml</include>
+  <version>3</version>
+  <dialect>0</dialect>
+  <enums>
+    <enum name="FUEL_CELL_CONTROL_COMMAND">
+      <description>Persistent FCS start/stop command sent to the fuel cell controller.</description>
+      <entry value="0" name="FUEL_CELL_CONTROL_COMMAND_OFF">
+        <description>Turn the fuel cell controller off.</description>
+      </entry>
+      <entry value="1" name="FUEL_CELL_CONTROL_COMMAND_ON">
+        <description>Turn the fuel cell controller on.</description>
+      </entry>
+      <entry value="2" name="FUEL_CELL_CONTROL_COMMAND_EMERGENCY_STOP">
+        <description>Request an emergency stop.</description>
+      </entry>
+    </enum>
+    <enum name="FUEL_CELL_DEVICE_STATE">
+      <description>FCS system state reported by the fuel cell controller over CAN.</description>
+      <entry value="0" name="FUEL_CELL_DEVICE_STATE_POWERING_ON">
+        <description>Powering on.</description>
+      </entry>
+      <entry value="1" name="FUEL_CELL_DEVICE_STATE_POWER_ON_COMPLETE">
+        <description>Power-on complete.</description>
+      </entry>
+      <entry value="2" name="FUEL_CELL_DEVICE_STATE_ENTERING_STANDBY">
+        <description>Entering standby.</description>
+      </entry>
+      <entry value="3" name="FUEL_CELL_DEVICE_STATE_STANDBY">
+        <description>Standby complete.</description>
+      </entry>
+      <entry value="4" name="FUEL_CELL_DEVICE_STATE_STARTING">
+        <description>Starting.</description>
+      </entry>
+      <entry value="5" name="FUEL_CELL_DEVICE_STATE_START_COMPLETE">
+        <description>Start complete.</description>
+      </entry>
+      <entry value="6" name="FUEL_CELL_DEVICE_STATE_RUNNING">
+        <description>Running.</description>
+      </entry>
+      <entry value="7" name="FUEL_CELL_DEVICE_STATE_STOPPING">
+        <description>Entering normal shutdown.</description>
+      </entry>
+      <entry value="8" name="FUEL_CELL_DEVICE_STATE_STOP_COMPLETE">
+        <description>Normal shutdown complete.</description>
+      </entry>
+      <entry value="9" name="FUEL_CELL_DEVICE_STATE_FAULT_STOPPING">
+        <description>Entering fault shutdown.</description>
+      </entry>
+      <entry value="10" name="FUEL_CELL_DEVICE_STATE_FAULT_STOP_COMPLETE">
+        <description>Fault shutdown complete.</description>
+      </entry>
+      <entry value="11" name="FUEL_CELL_DEVICE_STATE_EMERGENCY_STOPPING">
+        <description>Entering emergency stop.</description>
+      </entry>
+      <entry value="12" name="FUEL_CELL_DEVICE_STATE_EMERGENCY_STOP_COMPLETE">
+        <description>Emergency stop complete.</description>
+      </entry>
+      <entry value="13" name="FUEL_CELL_DEVICE_STATE_OUTPUT_CURRENT_LIMITED">
+        <description>Output current limited.</description>
+      </entry>
+    </enum>
+    <enum name="FUEL_CELL_CONNECTION_STATE">
+      <description>State of the fuel cell controller connection.</description>
+      <entry value="0" name="FUEL_CELL_CONNECTION_STATE_NEVER_CONNECTED">
+        <description>No valid device status frame has been received.</description>
+      </entry>
+      <entry value="1" name="FUEL_CELL_CONNECTION_STATE_OK">
+        <description>Device communication is healthy.</description>
+      </entry>
+      <entry value="2" name="FUEL_CELL_CONNECTION_STATE_ERROR_OCCURRED">
+        <description>The device was previously connected, but communication is currently lost.</description>
+      </entry>
+    </enum>
+    <enum name="FUEL_CELL_VALID_FLAGS" bitmask="true">
+      <description>Validity of the fifteen selected fuel-cell values. Bit0 is reserved after requested_power removal; existing bit assignments are preserved. Clear means unavailable, unconfirmed or stale.</description>
+      <entry value="2" name="FUEL_CELL_VALID_INLET_TEMPERATURE">
+        <description>inlet_temperature is valid.</description>
+      </entry>
+      <entry value="4" name="FUEL_CELL_VALID_OUTLET_TEMPERATURE">
+        <description>outlet_temperature is valid.</description>
+      </entry>
+      <entry value="8" name="FUEL_CELL_VALID_FAN_DUTY">
+        <description>fan_duty is valid.</description>
+      </entry>
+      <entry value="16" name="FUEL_CELL_VALID_INLET_VALVE_STATE">
+        <description>inlet_valve_state raw code is valid.</description>
+      </entry>
+      <entry value="32" name="FUEL_CELL_VALID_INLET_PRESSURE">
+        <description>inlet_pressure is valid.</description>
+      </entry>
+      <entry value="64" name="FUEL_CELL_VALID_PURGE_VALVE_STATE">
+        <description>purge_valve_state raw code is valid.</description>
+      </entry>
+      <entry value="128" name="FUEL_CELL_VALID_STACK_VOLTAGE">
+        <description>stack_voltage is valid.</description>
+      </entry>
+      <entry value="256" name="FUEL_CELL_VALID_STACK_CURRENT">
+        <description>stack_current in amperes is confirmed and valid. The source document's V unit must be resolved before setting this bit from TTL.</description>
+      </entry>
+      <entry value="512" name="FUEL_CELL_VALID_DCDC_VOLTAGE">
+        <description>dcdc_voltage is valid.</description>
+      </entry>
+      <entry value="1024" name="FUEL_CELL_VALID_DCDC_CURRENT">
+        <description>dcdc_current is valid.</description>
+      </entry>
+      <entry value="2048" name="FUEL_CELL_VALID_DCDC_STATE">
+        <description>dcdc_state raw code is valid.</description>
+      </entry>
+      <entry value="4096" name="FUEL_CELL_VALID_DCDC_FAULT">
+        <description>dcdc_fault raw code is valid.</description>
+      </entry>
+      <entry value="8192" name="FUEL_CELL_VALID_DCDC_TEMPERATURE_RAW">
+        <description>dcdc_temperature_raw byte is available. This does not establish a physical temperature unit.</description>
+      </entry>
+      <entry value="16384" name="FUEL_CELL_VALID_SYSTEM_STATUS">
+        <description>System status code is valid.</description>
+      </entry>
+      <entry value="32768" name="FUEL_CELL_VALID_SYSTEM_SUBSTATE">
+        <description>System substate code is valid.</description>
+      </entry>
+    </enum>
+  </enums>
+  <messages>
+    <message id="61000" name="FUEL_CELL_CONTROL">
+      <description>Set the persistent FCS start/stop command or request a fault reset pulse on a separate CAN control bit. A fault reset switches the persistent command to OFF. Bus voltage, bus current and requested power are determined by the flight controller and cannot be modified by this message. New requests require a healthy CAN device connection, except an emergency stop preempting an active reset pulse.</description>
+      <field type="uint32_t" name="request_id">Non-zero request identifier generated by the sender. Retries must use the same identifier and both control fields. Only the most recent request is cached, keyed by sender system/component and request identifier; duplicate requests return the original result without applying the command again.</field>
+      <field type="uint8_t" name="target_system">System ID of the target vehicle. Zero broadcasts to all systems.</field>
+      <field type="uint8_t" name="target_component">Component ID of the target autopilot. Zero broadcasts to all components.</field>
+      <field type="uint8_t" name="control_command" enum="FUEL_CELL_CONTROL_COMMAND">Persistent fuel cell controller command.</field>
+      <field type="uint8_t" name="reset_fault">Zero for a normal start/stop request; one requests a fault reset. A reset request forces the persistent command to OFF, except that EMERGENCY_STOP takes priority and cancels the reset. The flight controller transmits the separate CAN reset bit for three control-frame periods and then clears it. ACCEPTED means the pulse was started, not that the device cleared its fault.</field>
+    </message>
+    <message id="61001" name="FUEL_CELL_STATUS">
+      <description>Fuel cell controller connection, FCS state and command processing result. Published every 200 ms even when the CAN device is not connected, and immediately after connection changes or control request processing. Device state, SOC and DCDC output current are valid only while connection_state is OK. Receivers should mark this telemetry unavailable if no status is received for 1 second.</description>
+      <field type="uint32_t" name="response_request_id">Request ID associated with control_result. Zero means no request has been processed.</field>
+      <field type="uint16_t" name="requested_power" units="W">Flight-controller-owned requested power currently used in CAN control frames. Read-only telemetry, not a device acknowledgement.</field>
+      <field type="uint16_t" name="soc" units="c%">Last valid device lithium battery state of charge, in 0.01 percent. Valid only while connection_state is OK.</field>
+      <field type="uint16_t" name="dcdc_output_current" units="cA">Last valid device DCDC output current, in 0.01 A. All raw values from 0 to 65535 are valid. Read-only telemetry independent of the PMU bus current. Retained after disconnection and valid only while connection_state is OK.</field>
+      <field type="uint8_t" name="device_state" enum="FUEL_CELL_DEVICE_STATE">Last valid raw 4-bit FCS system state. States 0-13 are defined; unknown states 14-15 are forwarded without changing connection health or control permissions. Valid only while connection_state is OK.</field>
+      <field type="uint8_t" name="control_command" enum="FUEL_CELL_CONTROL_COMMAND">FCS command currently saved and sent by the flight controller. Actual device operation is reported by device_state.</field>
+      <field type="uint8_t" name="control_result" enum="MAV_RESULT">Processing result for response_request_id. ACCEPTED means that the flight controller saved the command or started the reset pulse, not that the device completed the operation. TEMPORARILY_REJECTED means that the CAN device is not connected or a start/stop request arrived during a reset pulse. DENIED means that a cached request identifier was reused with different control fields. UNSUPPORTED means that a control field is invalid.</field>
+      <field type="uint8_t" name="connection_state" enum="FUEL_CELL_CONNECTION_STATE">Current fuel cell controller connection state.</field>
+    </message>
+    <message id="61002" name="FUEL_CELL_TELEMETRY">
+      <description>DRAFT private AI-box-to-QGC telemetry containing the fifteen yellow/green FCS V1.1 fields. No actuator or start/stop command. Units refer to normalized outgoing telemetry, not unconfirmed TTL byte layouts. Unknown floats must be NaN and their validity bits clear. Integer codes require validity bits. Nominal initial maximum rate 10 Hz, configurable and only on fresh source data. Private ID, not an official allocation.</description>
+      <field type="uint32_t" name="time_boot_ms" units="ms">Measurement timestamp in AI-box monotonic time since its OS boot, modulo 2^32. Not Unix time. Do not refresh this timestamp when repeating stale data.</field>
+      <field type="uint32_t" name="valid_flags" enum="FUEL_CELL_VALID_FLAGS">Bitmask of valid business values. Unconfirmed source units, ambiguous source offsets and stale readings must have their bits clear.</field>
+      <field type="uint8_t" name="id" instance="true">Fuel-cell instance ID, initially 0. Source system/component IDs identify the aircraft and AI box separately.</field>
+      <field type="float" name="inlet_temperature" units="degC" invalid="NaN">Stack air-inlet temperature, described as ambient temperature in the FCS document.</field>
+      <field type="float" name="outlet_temperature" units="degC" invalid="NaN">Stack air-outlet temperature.</field>
+      <field type="float" name="fan_duty" units="%" invalid="NaN">Fan duty cycle, 0 to 100 percent, not a fraction from 0 to 1.</field>
+      <field type="uint8_t" name="inlet_valve_state">Inlet valve raw state code. The source document does not define code meanings. Ignore if its valid bit is clear.</field>
+      <field type="float" name="inlet_pressure" units="kPa" invalid="NaN">Stack gas-inlet pressure. Do not substitute gas-tank pressure from standard FUEL_STATUS.</field>
+      <field type="uint8_t" name="purge_valve_state">Purge valve raw state code. No open/closed enum is assumed.</field>
+      <field type="float" name="stack_voltage" units="V" invalid="NaN">Fuel-cell stack voltage.</field>
+      <field type="float" name="stack_current" units="A" invalid="NaN">Fuel-cell stack current normalized to amperes. Source table says V, a contradiction; do not convert or mark valid until vendor confirmation.</field>
+      <field type="float" name="dcdc_voltage" units="V" invalid="NaN">DC/DC output voltage.</field>
+      <field type="float" name="dcdc_current" units="A" invalid="NaN">DC/DC output current.</field>
+      <field type="uint8_t" name="dcdc_state">DC/DC raw state code; source enum is pending.</field>
+      <field type="uint8_t" name="dcdc_fault">DC/DC raw fault code; source enum is pending.</field>
+      <field type="uint8_t" name="dcdc_temperature_raw">Unmodified FCS V1.1 Byte28. For display apply the documented offset of -40. The document does not specify a physical unit.</field>
+      <extensions/>
+      <field type="uint16_t" name="system_status">FCS V1.1 system status code from Byte31–32.</field>
+      <field type="uint16_t" name="system_substate">FCS V1.1 system substate code from Byte33–34.</field>
+    </message>
+  </messages>
+</mavlink>
